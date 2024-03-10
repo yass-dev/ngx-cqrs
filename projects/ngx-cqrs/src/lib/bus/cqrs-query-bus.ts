@@ -16,11 +16,11 @@ export class CqrsQueryBus extends CqrsBus<CqrsQuery, CqrsQueryHandler<CqrsQuery,
     super(CqrsRegistry.queryHandlerRegistry, MetadataConstant.QUERY_TYPE_METADATA_KEY);
   }
 
-  public publish(query: CqrsQuery): Promise<CqrsQueryResult> {
+  public publish<ReturnType extends CqrsQueryResult>(query: CqrsQuery): Promise<ReturnType> {
     const handler: CqrsQueryHandler<CqrsQuery, CqrsQueryResult> | null = this._getHandlerByMessage(query);
     if (handler === null) {
       throw new HandlerNotFoundException(query);
     }
-    return handler.execute(query);
+    return handler.execute(query) as Promise<ReturnType>;
   }
 }
